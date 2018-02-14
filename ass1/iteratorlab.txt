@@ -1,0 +1,99 @@
+You are to write a program that implements an iterator for a binary
+search tree.  Specifically you should be able to write the following
+main program.
+```
+int main(){
+  Node* s=NULL;  
+  insert(s, 10); 
+  insert(s, 5);
+  insert(s, 15);
+  insert(s, 14);
+  insert(s, 16);
+
+  for(Node::iterator it = s->begin(); it != s->end(); ++it){
+    cout << *it <<' ';
+  }
+  cout << endl;
+}
+```
+This should print 5 10 14 15 16, i.e. the values in s in ascending
+order.  
+
+-----
+
+Here is some help and also some partial implementation snippets.
+
+An iterator is to be thought of as an abstract pointer, and it
+overloads the operators unary ++, unary *, and the binary !=.  The *
+operator should return the value pointed to by the abstract pointer.
+The ++ operator should cause the abstract pointer to point
+(abstractly!) to the next object in the set.
+
+You should start with the search tree code that you have developed so
+far.  You may want to include print function we wrote earlier for the
+purposes of debugging.  The iterator will have to be another struct.
+Since the Node struct and the iterator struct refer to each other, you
+will have to declare them in the following manner.
+```
+struct Node;
+
+struct bstIt{
+  vector<Node*> anc;  //pointers to ancestors from tree root to self.
+  void operator++();  // prefix unary operator
+  int operator*();    // prefix unary operator
+  bool operator !=(const bstIt);  // binary operator
+};
+
+struct Node{
+  Node *left, *right;
+  int value;
+  Node(int v){value = v; left=right=NULL;}
+  typedef bstIt iterator;
+  bstIt begin();
+  bstIt end();
+};
+```
+Notice that the way this has been written everything is referenced
+only after it is declared.  Note further that the type bstIt is
+defined as iterator; this allows us to write Node::iterator and mean
+bstIt to mimic the standard library.
+
+The iterator could be implemented as a real pointer to the node
+containing the next element of the set that should be returned when
+the user dereferences the iterator.  However, going to the next element is
+tricky.  This may require moving up/down the tree.  For example, if the
+current node is a left child, and it has no right child, then the next
+value will be found in the parent of the current node.  However, our
+Node object does not hold a parent pointer.  That is why the iterator
+object holds the complete list of ancestors including the current Node.
+Using the ancestor list, you can go to the parent or the grandparent of the
+node as you wish.  When you want the current value, you simply
+dereference the last of those ancestors
+
+The abstract dereferencing operator on iterators must simply
+dereference the last of the ancestors and return the value stored in
+it.  Thus its implementation is:
+```
+int bstIt::operator*(){
+  return anc.back()->value;
+}
+```
+To get started, first answer the following questions as clearly as
+possible.  (1) Which node holds the value of the smallest element in
+the set?  How do you get to it, i.e. what is the sequence of nodes to
+it from the root (these are its ancestors which you want stored in the
+iterator object).  This is what the begin member function in Node will
+have to return.  (2) Given a current node, how do you get to the node
+containing the next largest element in the set?  Although we dont have
+parent pointers, we do have the vector of ancestors, which will enable
+you to move up to the parents if you wish.  But note that the ancestor
+information should change when the iterator is incremented using the
+++ operator.
+
+---
+
+Note that we are using structs rather than classes so that we can
+freely use all members of all structs.  Ideally, you should use
+classes and not expose everything.  For this the notion of friends is
+useful, which is discussed in the book but which you dont need to know
+for the purpose of this lab.
