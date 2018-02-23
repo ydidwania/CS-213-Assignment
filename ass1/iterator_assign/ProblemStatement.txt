@@ -1,7 +1,11 @@
+------------------------------------------------------------
+INTRODUCTION
+------------------------------------------------------------
+
 You are to write a program that implements an iterator for a binary
 search tree.  Specifically you should be able to write the following
 main program.
-```
+
 int main(){
   Node* s=NULL;  
   insert(s, 10); 
@@ -15,13 +19,14 @@ int main(){
   }
   cout << endl;
 }
-```
+
 This should print 5 10 14 15 16, i.e. the values in s in ascending
-order.  
+order.  This is given just as an example; below you will be given the
+actual main program that you are required to include in your submission.
 
------
-
-Here is some help and also some partial implementation snippets.
+------------------------------------------------------------
+SOME HELP AND ALSO SOME PARTIAL IMPLEMENTATION SNIPPETS
+------------------------------------------------------------
 
 An iterator is to be thought of as an abstract pointer, and it
 overloads the operators unary ++, unary *, and the binary !=.  The *
@@ -34,7 +39,7 @@ far.  You may want to include print function we wrote earlier for the
 purposes of debugging.  The iterator will have to be another struct.
 Since the Node struct and the iterator struct refer to each other, you
 will have to declare them in the following manner.
-```
+
 struct Node;
 
 struct bstIt{
@@ -52,7 +57,7 @@ struct Node{
   bstIt begin();
   bstIt end();
 };
-```
+
 Notice that the way this has been written everything is referenced
 only after it is declared.  Note further that the type bstIt is
 defined as iterator; this allows us to write Node::iterator and mean
@@ -73,11 +78,11 @@ dereference the last of those ancestors
 The abstract dereferencing operator on iterators must simply
 dereference the last of the ancestors and return the value stored in
 it.  Thus its implementation is:
-```
+
 int bstIt::operator*(){
   return anc.back()->value;
 }
-```
+
 To get started, first answer the following questions as clearly as
 possible.  (1) Which node holds the value of the smallest element in
 the set?  How do you get to it, i.e. what is the sequence of nodes to
@@ -90,10 +95,103 @@ you to move up to the parents if you wish.  But note that the ancestor
 information should change when the iterator is incremented using the
 ++ operator.
 
----
+-----
 
 Note that we are using structs rather than classes so that we can
 freely use all members of all structs.  Ideally, you should use
 classes and not expose everything.  For this the notion of friends is
 useful, which is discussed in the book but which you dont need to know
 for the purpose of this lab.
+
+------------------------------------------------------------
+WHAT YOU ARE TO SUBMIT
+------------------------------------------------------------
+
+You are to submit a single source code file containing the following
+main program and declarations of Node and bstIt given above, repeated
+for convenience.  At the beginning of the file you should put other
+code as might be necessary to execute the main program: specifically,
+the definitions of the relevant functions.
+
+//----------file begins------------------
+
+struct Node;
+
+struct bstIt{
+  vector<Node*> anc;  //pointers to ancestors from tree root to self.
+  void operator++();  // prefix unary operator
+  int operator*();    // prefix unary operator
+  bool operator !=(const bstIt);  // binary operator
+};
+
+struct Node{
+  Node *left, *right;
+  int value;
+  Node(int v){value = v; left=right=NULL;}
+  typedef bstIt iterator;
+  bstIt begin();
+  bstIt end();
+};
+
+
+int main(){
+  Node* s = NULL;
+  while(true){
+    char input;
+    cin>>input;
+    if(input=='x')
+      break;
+    else if(input=='i'){
+      int value;
+      cin>>value;
+      insert(s, value);
+    }
+    else if(input=='p'){
+      if(s==NULL){
+        cout<<-1<<endl;
+      }
+      else {
+        for(Node::iterator it = s->begin(); it !=s->end(); ++it){
+          cout << *it <<' ';
+        }
+        cout << endl;
+      }
+    }
+  }
+}
+
+//----------- file ends-------
+
+Copy the code given above, and to it add whatever is needed to make it
+execute.
+
+Here is a quick description of the main program.  It takes input using
+letters for functions: ‘i’ for insert, ‘p’ for print using iterator,
+and ‘x’ for exit.  For example, "i 10" will insert 10 into the binary
+search tree. "p" will print the values of the tree in the
+increasing-order, and -1 if the tree is empty, "x" will exit the
+program.  A sample input and corresponding output is given below.
+
+Sample input:
+p
+i 15
+i 2
+p
+i 10
+i 20
+p
+i 3
+p
+x
+
+Sample output:
+-1
+2 15
+2 10 15 20
+2 3 10 15 20
+
+EXPLANATION: Initially the binary search tree is empty, hence output
+corresponding to 'p' is -1. 'i 15' and 'i 2' should insert 15 and 2
+into the tree. Now 'p' should print elements in the tree in increasing
+order, i.e., 2 15. Similarly for the other insert and print
+operations. Finally 'x' will terminate the program.
