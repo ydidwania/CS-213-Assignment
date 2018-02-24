@@ -10,8 +10,6 @@ struct bstIt{
   void operator++();  // prefix unary operator
   int operator*();     // prefix unary operator
   bool operator!=(const bstIt);  // binary operator
-
-  void pushAll(Node *root);
 };
 
 struct Node{
@@ -28,14 +26,15 @@ int bstIt::operator*() {
 }
 
 bool bstIt::operator!=(const bstIt it) {
-
     return (it.anc != anc);
 }
-
 
 void bstIt::operator++() {
     Node *tmp = anc.back();
 
+    // If right subtree exists,
+    // push back the entire left tree of the right child
+    // Else pop back until you reach a node which is a left child.
     if( tmp->right != NULL ){
         anc.push_back(tmp->right);
         tmp = tmp->right;
@@ -43,7 +42,6 @@ void bstIt::operator++() {
             anc.push_back(tmp->left);
             tmp = tmp->left;
         }
-        return;
     }
     else {
         anc.pop_back();
@@ -51,28 +49,11 @@ void bstIt::operator++() {
             tmp = anc.back();
             anc.pop_back();                
         }
-        return;
     }
-
-    // if (tmp->value < anc.back()->value){
-        // anc.pop_back();
-        // anc.pop_back();                
-    // }
-
-    // anc.pop_back();
-    // cout << "c3";
-    // pushAll(tmp->right) ;
-    // cout << "c4";
-    return ;
+    return;
 }
 
-void bstIt::pushAll(Node *root){
-    while(root != NULL){
-        anc.push_back(root);
-        root = root->left;
-    }
-}
-
+// Returns the extreme left sequence of nodes from root
 bstIt Node::begin() {
     bstIt it;
     Node *root = this;
@@ -85,12 +66,6 @@ bstIt Node::begin() {
 
 bstIt Node::end() {
     bstIt it;
-    // Node* root = this;
-    // while(root->left != NULL){
-        // it.anc.push_back(root);
-        // root = root->right;
-    // }
-    // it.anc.push_back(root->left);
     return it ;
 }
 
@@ -106,9 +81,7 @@ void insert(Node* &myset, int x){
         else
             insert(myset->left, x);
     }
-    // cout << x<<endl;
 }
-
 
 int main(){
   Node* s = NULL;
@@ -127,12 +100,6 @@ int main(){
         cout<<-1<<endl;
       }
       else {
-        // cout << (it !=s->end());
-        // ++it;
-        // cout << "p3"<<endl;
-         // cout <<endl <<"..value"<<*it<<"..";
-        // cout << (it !=s->end());
-        
         for(Node::iterator it = s->begin(); it !=s->end(); ++it){
           cout << *it <<' ';
         }
