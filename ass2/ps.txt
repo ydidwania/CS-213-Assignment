@@ -22,23 +22,23 @@ There are many ways in which a canonical form can be defined.  For
 
 example, we could define some kind of comparison order < on expression
 
-trees, and stipulate that in the canonical form the lhs tree must be <
+trees, and stipulate that in the canonical form the left subtree must be <
 
-or = to the rhs tree.  So to convert to canonical form you will need to
+or = to the right subtree.  So to convert to canonical form you will need to
 
-rearrange the tree to fit this rule (recursively as needed).  Finally, <
+rearrange the tree to fit this rule (recursively as needed).  
 
-can also be defined in many ways.  For example, you could say that at
+
+Finally, < can also be defined in many ways.  For example, you could say that at
 
 NULL tree is < than any tree.  If two trees have different op members,
 
 then the one with the smaller value of op (by ASCII code) is < the other
 
-and so on recursively.	If two trees are primitive expressions,	then
+and so on recursively. If two trees are primitive expressions, then the values
 
-the values can be compared (string comparison).
+can be compared (using string comparison)
 
-
-Input: two fully parenthesized expressions, separated by	whitespace
+Input: two fully parenthesized expressions, with no space in between
 
 Output:	1 if the expressions are equivalent, 0 if not.
