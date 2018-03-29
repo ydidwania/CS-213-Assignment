@@ -37,14 +37,16 @@ struct Node {
             if (infile.get() != ')')
                 cout << "No matching paranthesis."<<endl;
         }
-        else if(c==' ') return;
-        else    cout<<c<<"Error in input"<<endl;
+        else if(c==' ') 
+            return;
+        else 
+            cout<<"Error in input"<<endl;
     }
 
     string getVal() const{
     if(op=='P')
         return value;
-    return (L->getVal() + op + R->getVal());
+    return ('(' + L->getVal() + op + R->getVal() + ')');
     }
 
     void conCan(){
@@ -66,27 +68,17 @@ struct Node {
 };
 
 
-int main(){
+int main(int argc, char* argv[]){
     filebuf fb;
-    fb.open ("test.txt",ios::in);
+    fb.open (argv[1],ios::in);
     istream is(&fb);
-    Node* root = new Node(is);
-    root->conCan();
+    Node* exp1 = new Node(is);
+    exp1->conCan();
+    is.ignore(1);
+    Node* exp2 = new Node(is);
+    exp2->conCan();
+    cout<< (exp1->getVal() == exp2->getVal()) <<endl;
     
-    // while(true){
-    //     char c  = is.get();
-
-    //     cout<<c<<endl;
-    //     if (c=='4'){
-    //         break;
-    //     }   
-
-    //}
     fb.close();
     return 0;
 }
-
-
-
-
-
